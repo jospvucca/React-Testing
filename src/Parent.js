@@ -1,13 +1,8 @@
 import React, { Component } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useNavigate,
-  useLocation,
-} from "react-router-dom"; //TODO: probably the smartest thing to do is to switch to this
+import { Route, Routes } from "react-router-dom"; //TODO: probably the smartest thing to do is to switch to this
 import LoginPage from "./LoginPage";
 import LobbyPage from "./LobbyPage";
+import { withNavigate } from './hoc/withNavigate'
 //import 'bootstrap/dist/css/bootstrap.min.css'
 
 //this might be useful: https://ui.dev/react-router-tutorial
@@ -33,7 +28,8 @@ export class Parent extends React.Component {
     this.setState({ data: childData }, this.clickMe(childData));
     console.log("Parent::callbackFunction::state: " + this.state.data);
     this.componentDidUpdate();
-    //window.location.href = "/Test";
+    //window.location.href = "/Test"; // window.location.href reloads whole page --> state gets lost
+    this.props.navigate("/Test")
   };
 
   componentDidUpdate() {
@@ -47,13 +43,12 @@ export class Parent extends React.Component {
           this.dataFromParent
       );
       this.dataFromParent = this.state.data;
-      window.location.href = "/Test";
+      //window.location.href = "/Test";
     }
   }
 
   render() {
     return (
-      <Router>
         <Routes>
           <Route
             path="/"
@@ -72,12 +67,12 @@ export class Parent extends React.Component {
             }
           ></Route>
         </Routes>
-      </Router>
     );
   }
 }
 
-export default Parent;
+// HOC
+export default withNavigate(Parent);
 
 // export class Parent extends React.Component {
 //   constructor(props) {
