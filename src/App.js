@@ -65,7 +65,11 @@ import Parent from "./Parent";
 
 export class App extends React.Component {
   render() {
-    return <Parent />;
+    return (
+      <Router>
+        <Parent />
+      </Router>
+    );
   }
 }
 export default App;

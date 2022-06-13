@@ -82,11 +82,11 @@ import { Navigate, Link, Router, Route } from "react-router-dom";
 
 class LoginPage extends React.Component {
   sendData = () => {
-    this.props.parentCallback("Hey ");
+    this.props.parentCallback("Hey ", "/Test");
   };
   render() {
     return (
-      <button className="ButtonChangeProps" onClick={this.sendData}>
+      <button className="ButtonChangePropsx" onClick={this.sendData}>
         LoginPage
       </button>
     );

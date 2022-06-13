@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import { Route, Routes } from "react-router-dom"; //TODO: probably the smartest thing to do is to switch to this
 import LoginPage from "./LoginPage";
 import LobbyPage from "./LobbyPage";
-import { withNavigate } from './hoc/withNavigate'
+import WritingPhase from "./WritingPhase";
+import { withNavigate } from "./hoc/withNavigate";
 //import 'bootstrap/dist/css/bootstrap.min.css'
 
 //this might be useful: https://ui.dev/react-router-tutorial
@@ -24,12 +25,12 @@ export class Parent extends React.Component {
     );
   };
 
-  callbackFunction = childData => {
+  callbackFunction = (childData, link) => {
     this.setState({ data: childData }, this.clickMe(childData));
     console.log("Parent::callbackFunction::state: " + this.state.data);
     this.componentDidUpdate();
     //window.location.href = "/Test"; // window.location.href reloads whole page --> state gets lost
-    this.props.navigate("/Test")
+    this.props.navigate(link);
   };
 
   componentDidUpdate() {
@@ -49,24 +50,36 @@ export class Parent extends React.Component {
 
   render() {
     return (
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <div>
-                <LoginPage parentCallback={this.callbackFunction} />
-              </div>
-            }
-          ></Route>
-          <Route
-            path="/Test"
-            element={
-              <div>
-                <LobbyPage dataFromParent={this.state.data} />
-              </div>
-            }
-          ></Route>
-        </Routes>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div>
+              <LoginPage parentCallback={this.callbackFunction} />
+            </div>
+          }
+        ></Route>
+        <Route
+          path="/Test"
+          element={
+            <div>
+              <LobbyPage
+                //TESTING CALLBACK(should be called after the button on Lobby page is called) + SEND DATA
+                parentCallback={this.callbackFunction}
+                dataFromParent={this.state.data}
+              />
+            </div>
+          }
+        ></Route>
+        <Route
+          path="/WritingPhase"
+          element={
+            <div>
+              <WritingPhase dataFromParent={this.state.data} />
+            </div>
+          }
+        ></Route>
+      </Routes>
     );
   }
 }

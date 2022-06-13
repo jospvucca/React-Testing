@@ -34,8 +34,20 @@ export class LobbyPage extends React.Component {
   componentDidUpdate() {
     console.log("LobbyPage::componentDidUpdate " + this.props.dataFromParent);
   }
+
+  sendData = () => {
+    this.props.parentCallback("Hello", "/WritingPhase");
+  };
+
   render() {
-    return <div>The data from parent is:{this.props.dataFromParent}/</div>;
+    return (
+      <div>
+        The data from parent is:{this.props.dataFromParent}/
+        <button className="ButtonChangeProps" onClick={this.sendData}>
+          Click to go to WritingPhase
+        </button>
+      </div>
+    );
   }
 }
 
