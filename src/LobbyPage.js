@@ -35,7 +35,14 @@ export class LobbyPage extends React.Component {
     console.log("LobbyPage::componentDidUpdate " + this.props.dataFromParent);
   }
 
-  sendData = () => {
+  sendData = async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    };
+
+    await fetch("http://localhost:3000", requestOptions);
+
     this.props.parentCallback("Hello", "/WritingPhase");
   };
 

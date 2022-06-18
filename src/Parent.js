@@ -1,159 +1,87 @@
 import React, { Component } from "react";
-import { Route, Routes } from "react-router-dom"; //TODO: probably the smartest thing to do is to switch to this
+import { Route, Routes } from "react-router-dom";
 import LoginPage from "./LoginPage";
 import LobbyPage from "./LobbyPage";
 import WritingPhase from "./WritingPhase";
 import { withNavigate } from "./hoc/withNavigate";
-//import 'bootstrap/dist/css/bootstrap.min.css'
-
-//this might be useful: https://ui.dev/react-router-tutorial
-
-//API for possible solution(duka) https://www.youtube.com/watch?v=ch8kiuRJc7I
-
+import SignalRHubConnector from "./signalr/SignalRHubConnector";
 export class Parent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       data: "Hello World",
+      hubConnection: null,
     };
   }
 
-  clickMe = updateData => {
-    this.setState({ data: updateData });
-    console.log(
-      "Parent::clickMe: " + updateData + " and state: " + this.state.data
+  signalRPropsCallbackFunction = hub => {
+    console.warn(
+      "Parent::signalRPropsCallbackFunction... This function should recieve all props from signalr class and be used as a main here"
     );
+    console.warn("Recieved: " + JSON.stringify(hub));
+    this.setState({ hubConnection: hub });
+    console.warn("UPDATED HUB: " + JSON.stringify(this.state.hubConnection));
   };
 
   callbackFunction = (childData, link) => {
-    this.setState({ data: childData }, this.clickMe(childData));
+    this.setState({ data: childData });
     console.log("Parent::callbackFunction::state: " + this.state.data);
-    this.componentDidUpdate();
-    //window.location.href = "/Test"; // window.location.href reloads whole page --> state gets lost
     this.props.navigate(link);
   };
 
-  componentDidUpdate() {
-    if (this.state.data !== "Hey ") {
-      console.error(this.state.data);
-    } else {
-      console.log(
-        "Parent::componentDidUpdate: " +
-          this.state.data +
-          " and " +
-          this.dataFromParent
-      );
-      this.dataFromParent = this.state.data;
-      //window.location.href = "/Test";
-    }
-  }
+  signalRParentCallbackFunction = () => {
+    console.log(
+      "Parent::singalRParentCallbackFunction:: Called from LoginPage."
+    );
+  };
+
+  componentDidMount() {}
 
   render() {
     return (
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <div>
-              <LoginPage parentCallback={this.callbackFunction} />
-            </div>
-          }
-        ></Route>
-        <Route
-          path="/Test"
-          element={
-            <div>
-              <LobbyPage
-                //TESTING CALLBACK(should be called after the button on Lobby page is called) + SEND DATA
-                parentCallback={this.callbackFunction}
-                dataFromParent={this.state.data}
-              />
-            </div>
-          }
-        ></Route>
-        <Route
-          path="/WritingPhase"
-          element={
-            <div>
-              <WritingPhase dataFromParent={this.state.data} />
-            </div>
-          }
-        ></Route>
-      </Routes>
+      <div>
+        <SignalRHubConnector
+          signalRPropsCallback={this.signalRPropsCallbackFunction}
+        />
+        <Routes>
+          <Route
+            exact
+            path="/"
+            element={
+              <div>
+                <LoginPage
+                  parentCallback={this.callbackFunction}
+                  signalRParentCallback={this.signalRParentCallbackFunction}
+                />
+              </div>
+            }
+          ></Route>
+          <Route
+            exact
+            path="/Test"
+            element={
+              <div>
+                <LobbyPage
+                  parentCallback={this.callbackFunction}
+                  dataFromParent={this.state.data}
+                />
+              </div>
+            }
+          ></Route>
+          <Route
+            exact
+            path="/WritingPhase"
+            element={
+              <div>
+                <WritingPhase dataFromParent={this.state.data} />
+              </div>
+            }
+          ></Route>
+        </Routes>
+      </div>
     );
   }
 }
 
 // HOC
 export default withNavigate(Parent);
-
-// export class Parent extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       jsonLobby: {},
-//       jsonPlayer: {},
-//     };
-//   }
-
-//   handleCallback = (jsonlobby, jsonplayer) => {
-//     console.log(
-//       "App::handleCallback::Recieved data: " +
-//         JSON.stringify(jsonlobby) +
-//         "\n" +
-//         JSON.stringify(jsonplayer)
-//     );
-//     this.setState({ jsonLobby: jsonlobby });
-//     this.setState({ jsonPlayer: jsonplayer });
-
-//     console.log(
-//       "App::handleCallback::Props: " +
-//         JSON.stringify(this.props.jsonLobby) +
-//         "\n\n" +
-//         JSON.stringify(this.props.jsonPlayer)
-//     );
-
-//     console.log(
-//       "App::handleCallback::Updated states: " +
-//         "\n" +
-//         JSON.stringify(this.state.jsonLobby) +
-//         "\nPlayer: " +
-//         JSON.stringify(this.state.jsonPlayer)
-//     );
-
-//     console.log(
-//       "App::handleCallback::Props after updated states: " +
-//         JSON.stringify(this.props.jsonLobby) +
-//         "\n\n" +
-//         JSON.stringify(this.props.jsonPlayer)
-//     );
-//   };
-
-//   render() {
-//     console.log("App::render...");
-//     return (
-//       <Router>
-//         <Routes>
-//           <Route
-//             exact
-//             path="/"
-//             element={
-//               <div>
-//                 <LoginPage parentCallback={this.handleCallback} />
-//               </div>
-//             }
-//           ></Route>
-
-//           <Route
-//             exact
-//             path="/Test"
-//             element={<LobbyPage datafromparent={this.state.jsonLobby} />}
-//             // props dont update, cant send this to child need help
-//           ></Route>
-//         </Routes>
-//       </Router>
-//     );
-//   }
-// }
-
-// export default Parent;

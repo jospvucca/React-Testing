@@ -81,7 +81,12 @@ import LobbyPage from "./LobbyPage";
 import { Navigate, Link, Router, Route } from "react-router-dom";
 
 class LoginPage extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   sendData = () => {
+    this.props.signalRParentCallback();
     this.props.parentCallback("Hey ", "/Test");
   };
   render() {

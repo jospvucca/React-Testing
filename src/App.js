@@ -61,14 +61,18 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Parent from "./Parent";
+import SignalRHubConnector from "./signalr/SignalRHubConnector";
 //import 'bootstrap/dist/css/bootstrap.min.css'
 
 export class App extends React.Component {
   render() {
     return (
-      <Router>
-        <Parent />
-      </Router>
+      <div>
+        {/* <SignalRHubConnector /> */}
+        <Router>
+          <Parent />
+        </Router>
+      </div>
     );
   }
 }
