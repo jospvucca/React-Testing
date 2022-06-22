@@ -53,7 +53,7 @@ export class Parent extends React.Component {
       <div>
         Signalr: {JSON.stringify(this.state.hubConnection)}
         <SignalRHubConnector
-        //signalRPropsCallback={this.signalRPropsCallbackFunction}
+          signalRPropsCallback={this.signalRPropsCallbackFunction}
         />
         <Routes>
           <Route
@@ -63,7 +63,7 @@ export class Parent extends React.Component {
               <div>
                 <LoginPage
                   parentCallback={this.callbackFunction}
-                  //signalRParentCallback={this.signalRParentCallbackFunction}
+                  signalRParentCallback={this.signalRParentCallbackFunction}
                 />
                 Data: {JSON.stringify(this.state.hubConnection)}
               </div>
