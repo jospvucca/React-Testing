@@ -14,12 +14,12 @@ export class Parent extends React.Component {
     };
   }
 
-  signalRPropsCallbackFunction = hub => {
+  signalRPropsCallbackFunction = async hub => {
     console.warn(
       "Parent::signalRPropsCallbackFunction... This function should recieve all props from signalr class and be used as a main here"
     );
     console.warn("Recieved: " + JSON.stringify(hub));
-    this.setState({ hubConnection: hub });
+    await this.setState({ hubConnection: hub });
     console.warn("UPDATED HUB: " + JSON.stringify(this.state.hubConnection));
   };
 
@@ -33,6 +33,17 @@ export class Parent extends React.Component {
     console.log(
       "Parent::singalRParentCallbackFunction:: Called from LoginPage."
     );
+
+    if (this.state.hubConnection === null) {
+      console.error(
+        "Parent::signalRParentCallbackfunction::state hubConnection is null."
+      );
+    }
+
+    this.state.hubConnection
+      .invoke("SendMessage", "parent", "msg")
+      .then(() => console.log("Parent::hubConnection::invoke::SendMessage"))
+      .catch(err => console.error(err));
   };
 
   componentDidMount() {}
@@ -40,8 +51,9 @@ export class Parent extends React.Component {
   render() {
     return (
       <div>
+        Signalr: {JSON.stringify(this.state.hubConnection)}
         <SignalRHubConnector
-          signalRPropsCallback={this.signalRPropsCallbackFunction}
+        //signalRPropsCallback={this.signalRPropsCallbackFunction}
         />
         <Routes>
           <Route
@@ -51,8 +63,9 @@ export class Parent extends React.Component {
               <div>
                 <LoginPage
                   parentCallback={this.callbackFunction}
-                  signalRParentCallback={this.signalRParentCallbackFunction}
+                  //signalRParentCallback={this.signalRParentCallbackFunction}
                 />
+                Data: {JSON.stringify(this.state.hubConnection)}
               </div>
             }
           ></Route>

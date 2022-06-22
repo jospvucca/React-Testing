@@ -2,6 +2,9 @@ import React from "react";
 import * as SignalR from "@microsoft/signalr";
 import LoginPage from "../LoginPage";
 
+//TODO: https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/mapping-users-to-connections
+//Ovde pise vise kako preservat connectionId, iako je kompleksno
+
 class SignalRHubConnector extends React.Component {
   constructor(props) {
     super(props);
@@ -21,22 +24,31 @@ class SignalRHubConnector extends React.Component {
       .catch(err => console.err(err));
   };
 
-  componentDidMount = async () => {
+  instantiateSignalR = async () => {
     const hubConnection = new SignalR.HubConnectionBuilder()
-      .withUrl("http://localhost:43358/api/Lobby/create")
+      .withUrl("http://localhost:43358/api/Lobby/create", {
+        // skipNegotiation: true,
+        transport: SignalR.HttpTransportType.WebSockets,
+        connectionId: "oCiGPUtYeDh8y3ee8edCWS",
+      })
       .configureLogging(SignalR.LogLevel.Information)
-      .withAutomaticReconnect()
+      // .withAutomaticReconnect()
       .withHubProtocol(new SignalR.JsonHubProtocol())
       .build();
 
-    await this.setState(
-      { hubConnection: hubConnection },
-      async () =>
-        await this.state.hubConnection
-          .start()
-          .then(() => console.log("Connection Started!"))
-          .catch(err => console.error(err))
+    await this.setState({ hubConnection: hubConnection }, () =>
+      this.state.hubConnection
+        .start()
+        .then(() => console.log("Connection Started!"))
+        .catch(err => console.error(err))
     );
+
+    if (
+      hubConnection.connectionId !== null ||
+      hubConnection.connectionId === null
+    ) {
+      console.error(hubConnection.connectionId);
+    }
 
     this.props.signalRPropsCallback(hubConnection);
 
@@ -51,6 +63,10 @@ class SignalRHubConnector extends React.Component {
         );
       }
     );
+  };
+
+  componentDidMount = async () => {
+    await this.instantiateSignalR();
   };
 
   // componentDidUpdate() {

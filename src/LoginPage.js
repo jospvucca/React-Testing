@@ -92,7 +92,7 @@ class LoginPage extends React.Component {
   render() {
     return (
       <button className="ButtonChangePropsx" onClick={this.sendData}>
-        LoginPage
+        Login Page
       </button>
     );
   }
